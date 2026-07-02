@@ -1,0 +1,128 @@
+{
+  "project_name": "FREE WAY SCUBA DIVING",
+  "domain": "Scuba Diving & Premium Adventure Travel",
+  "archetype": "5 (Luxury) & 1 (Organic & Earthy - Ocean Variant)",
+  "theme": "Hybrid (Deep Ocean Dark & Warm Sand Light)",
+  "design_philosophy": {
+    "core_feeling": "Professional, clean, safe, exciting, and premium.",
+    "visual_mood": "Deep ocean blues transitioning into warm sandy beiges. Immersive underwater storytelling paired with high-end, editorial layout structures to build trust and drive high-ticket bookings.",
+    "anti_patterns": [
+      "No generic 'Bootstrap' template look.",
+      "No bright cartoonish blues or pure black.",
+      "Avoid completely flat design; rely on subtle gradients, glassmorphism, and deep shadows."
+    ]
+  },
+  "colors": {
+    "primary": {
+      "name": "Deep Ocean",
+      "value": "#061A2B",
+      "description": "Used for dark section backgrounds, primary text on light backgrounds."
+    },
+    "secondary": {
+      "name": "Caribbean Turquoise",
+      "value": "#00B4D8",
+      "description": "Used for accents, hover states, secondary buttons, and highlighting key text."
+    },
+    "accent": {
+      "name": "WhatsApp Green",
+      "value": "#25D366",
+      "description": "Strictly used for WhatsApp booking CTA buttons to ensure high conversion."
+    },
+    "background": {
+      "dark": "#020B14",
+      "light": "#F4F1EB",
+      "white": "#FFFFFF"
+    },
+    "text": {
+      "on_dark": "#F9FAFB",
+      "on_light": "#061A2B",
+      "muted_on_dark": "#9CA3AF",
+      "muted_on_light": "#4B5563"
+    }
+  },
+  "typography": {
+    "heading_font": "Playfair Display",
+    "body_font": "Outfit",
+    "hierarchy": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl font-serif tracking-tight text-balance",
+      "h2": "text-3xl sm:text-4xl lg:text-5xl font-serif tracking-tight text-balance",
+      "h3": "text-2xl sm:text-3xl font-serif",
+      "h4": "text-lg sm:text-xl font-sans font-semibold",
+      "body": "text-base leading-relaxed font-sans",
+      "small_label": "text-xs font-sans tracking-[0.2em] uppercase font-semibold"
+    }
+  },
+  "layout_and_spacing": {
+    "spacing_scale": "Generous spacing: py-20 to py-32 for sections to allow the design to breathe.",
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "grid_system": "Bento grids for destinations and imagery. Asymmetrical layouts for editorial storytelling. Direct children of grid MUST be the motion.div or standard div.",
+    "surface_styles": {
+      "dark_glass": "bg-white/5 backdrop-blur-xl border border-white/10 shadow-2xl",
+      "light_glass": "bg-black/5 backdrop-blur-xl border border-black/10 shadow-xl",
+      "solid_card": "bg-white border border-gray-100 shadow-sm hover:shadow-lg transition-shadow duration-300"
+    }
+  },
+  "ui_components": {
+    "navigation": {
+      "style": "Sticky/Fixed header (z-50). Crystal glassmorphism (backdrop-blur-xl bg-[#061A2B]/80 border-b border-white/10).",
+      "elements": "Brand Logo (left), Nav Links (center desktop), EN/ES Toggle & Primary WhatsApp CTA (right)."
+    },
+    "buttons": {
+      "primary_whatsapp": "bg-[#25D366] text-white hover:bg-[#20bd5a] font-semibold px-6 py-3 rounded-full flex items-center gap-2 transition-transform hover:-translate-y-1 shadow-lg shadow-[#25D366]/20",
+      "secondary_glass": "bg-white/10 text-white backdrop-blur-md border border-white/20 hover:bg-white/20 font-semibold px-6 py-3 rounded-full transition-colors",
+      "outline_dark": "border-2 border-[#061A2B] text-[#061A2B] hover:bg-[#061A2B] hover:text-white font-semibold px-6 py-3 rounded-full transition-colors"
+    },
+    "cards": {
+      "tour_card": "Use solid_card on light backgrounds or dark_glass on deep backgrounds. Must contain: Image, Title, Price, Duration, small tags (e.g., 'Beginner Friendly'), and a full-width WhatsApp booking button.",
+      "destination_card": "Image background with dark gradient overlay (bg-gradient-to-t from-black/80 to-transparent). Text placed at the bottom. Scale image on hover."
+    },
+    "floating_whatsapp": "Fixed to bottom-right corner (z-50). Circular shape, big WhatsApp icon, shadow-2xl, pulse animation."
+  },
+  "pages_structure": {
+    "Home": [
+      "Hero: Full-width underwater image, deep gradient overlay, H1 (Scuba Diving in Riviera Maya), Dual CTAs, Trust Badges (PADI, 5-Star).",
+      "About/Intro: Warm Sand background (light). Editorial layout with overlapping images (turtle/reef), introduction to the premium experience.",
+      "Featured Tours: Deep Ocean background. 3-4 glass cards highlighting top tours (Cenote, Cozumel, Reef).",
+      "Destinations: Bento grid (Tulum, Playa del Carmen, Cozumel).",
+      "Why Choose Us: Icon grid (Safety, Small Groups, Premium Equipment).",
+      "Testimonials: Sand background, elegant carousel/masonry of reviews.",
+      "Footer: Deep Ocean background, soft wave SVG divider at top."
+    ],
+    "Tours": "Grid of all diving and snorkeling tours with filtering options (Reef, Cenote, Beginner).",
+    "Courses": "PADI courses from Open Water to Divemaster. Emphasize safety and professional instruction.",
+    "Destinations": "Detailed sections for each location, explaining what marine life to expect (Bull sharks, Whale sharks).",
+    "Reviews": "Dedicated trust-building page with TripAdvisor/Google review embeds or styled cards.",
+    "FAQ": "Accordion (Shadcn) layout answering common questions (water temp, gear, safety).",
+    "Contact": "Booking form, location maps, direct WhatsApp/email links."
+  },
+  "media_assets": {
+    "hero_image": "https://images.pexels.com/photos/11060853/pexels-photo-11060853.jpeg",
+    "cenote_1": "https://images.pexels.com/photos/10519068/pexels-photo-10519068.jpeg",
+    "cenote_2": "https://images.pexels.com/photos/3822185/pexels-photo-3822185.jpeg",
+    "reef_turtle": "https://images.pexels.com/photos/4767913/pexels-photo-4767913.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+    "diving_canyon": "https://images.pexels.com/photos/3113226/pexels-photo-3113226.jpeg",
+    "diving_group": "https://images.pexels.com/photos/33905998/pexels-photo-33905998.jpeg",
+    "diving_bubbles": "https://images.pexels.com/photos/11061223/pexels-photo-11061223.jpeg"
+  },
+  "motion_and_interaction": {
+    "scroll_reveal": "Use framer-motion for fade-up on scroll (initial={opacity: 0, y: 20} whileInView={opacity: 1, y: 0}).",
+    "hover_effects": "Images scale up subtly (scale-105) inside overflow-hidden containers. Buttons lift slightly (-translate-y-1).",
+    "page_transitions": "Smooth fade between routes (if using React Router)."
+  },
+  "testing_attributes": {
+    "rule": "All interactive elements MUST have data-testid attributes.",
+    "examples": [
+      "data-testid='hero-whatsapp-btn'",
+      "data-testid='nav-es-toggle'",
+      "data-testid='tour-card-book-btn'"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "Use Playfair Display for headings and Outfit for body text (import via Google Fonts).",
+    "Ensure the EN/ES toggle is functional at least at the state level (updating content via a simple context or state hook).",
+    "Implement the soft wave shapes using SVG paths as section dividers (e.g., between the Dark Hero and the Light About section).",
+    "Do NOT use generic Shadcn cards for the premium glass aesthetic; construct them manually using pure HTML/Tailwind as specified in surface_styles.",
+    "The sticky WhatsApp button is critical for conversion. It must be visible on all pages on both mobile and desktop.",
+    "Strictly follow the color palette to maintain the 'premium ocean' feel."
+  ]
+}

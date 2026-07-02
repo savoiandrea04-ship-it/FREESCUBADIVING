@@ -1,0 +1,155 @@
+import { useState, useEffect } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { Menu, X, Languages } from "lucide-react";
+import { useLanguage } from "@/context/LanguageContext";
+import { waLink } from "@/data/content";
+import { WaIcon } from "@/components/icons";
+
+const links = [
+  { to: "/", key: "home" },
+  { to: "/cenote-diving", key: "cenote" },
+  { to: "/reef-diving", key: "reef" },
+  { to: "/diving-courses", key: "courses" },
+  { to: "/packages", key: "packages" },
+  { to: "/about", key: "about" },
+  { to: "/faq", key: "faq" },
+  { to: "/contact", key: "contact" },
+];
+
+export const Navbar = () => {
+  const { t, toggle, other } = useLanguage();
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+
+  useEffect(() => setOpen(false), [location.pathname]);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <header
+      className={`fixed top-0 inset-x-0 z-50 transition-colors duration-300 ${
+        scrolled ? "bg-[#061A2B]/90 backdrop-blur-xl border-b border-white/10" : "bg-transparent"
+      }`}
+      data-testid="main-navbar"
+    >
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+        <Link to="/" data-testid="nav-logo" className="flex items-center gap-2 group shrink-0">
+          <span className="flex items-center justify-center w-9 h-9 rounded-full bg-[#00B4D8] text-[#061A2B]">
+            <WaveMark />
+          </span>
+          <span className="font-serif text-white text-lg sm:text-xl leading-none tracking-tight">
+            Free Way <span className="text-[#00B4D8]">Scuba</span>
+          </span>
+        </Link>
+
+        <div className="hidden xl:flex items-center gap-5">
+          {links.map((l) => (
+            <NavLink
+              key={l.key}
+              to={l.to}
+              end={l.to === "/"}
+              data-testid={`nav-link-${l.key}`}
+              className={({ isActive }) =>
+                `text-sm font-medium transition-colors whitespace-nowrap ${
+                  l.key === "cenote"
+                    ? isActive
+                      ? "text-[#00B4D8]"
+                      : "text-[#00B4D8]/90 hover:text-[#00B4D8]"
+                    : isActive
+                    ? "text-[#00B4D8]"
+                    : "text-white/80 hover:text-white"
+                }`
+              }
+            >
+              {t.nav[l.key]}
+            </NavLink>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          <button
+            onClick={toggle}
+            data-testid="lang-toggle-btn"
+            className="hidden sm:flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium px-3 py-2 rounded-full border border-white/15 hover:border-white/30 transition-colors"
+          >
+            <Languages className="w-4 h-4" />
+            {other}
+          </button>
+          <a
+            href={waLink("Hi Free Way Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="nav-whatsapp-btn"
+            className="hidden sm:inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-transform hover:-translate-y-0.5 shadow-lg shadow-[#25D366]/20 whitespace-nowrap"
+          >
+            <WaIcon className="w-4 h-4" />
+            {t.nav.book}
+          </a>
+          <button
+            onClick={() => setOpen((o) => !o)}
+            data-testid="mobile-menu-toggle"
+            aria-label="Menu"
+            className="xl:hidden text-white p-2"
+          >
+            {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
+        </div>
+      </nav>
+
+      {open && (
+        <div className="xl:hidden bg-[#061A2B]/98 backdrop-blur-xl border-t border-white/10" data-testid="mobile-menu">
+          <div className="px-4 py-4 flex flex-col gap-1">
+            {links.map((l) => (
+              <NavLink
+                key={l.key}
+                to={l.to}
+                end={l.to === "/"}
+                data-testid={`mobile-nav-link-${l.key}`}
+                className={({ isActive }) =>
+                  `py-3 px-2 rounded-lg text-base font-medium ${
+                    l.key === "cenote"
+                      ? isActive
+                        ? "text-[#00B4D8] bg-white/5"
+                        : "text-[#00B4D8]/90"
+                      : isActive
+                      ? "text-[#00B4D8] bg-white/5"
+                      : "text-white/85"
+                  }`
+                }
+              >
+                {t.nav[l.key]}
+              </NavLink>
+            ))}
+            <button
+              onClick={toggle}
+              data-testid="mobile-lang-toggle"
+              className="flex items-center gap-2 mt-2 py-3 px-2 text-white/85 text-base font-medium"
+            >
+              <Languages className="w-5 h-5" /> {other}
+            </button>
+            <a
+              href={waLink("Hi Free Way Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-testid="mobile-whatsapp-btn"
+              className="mt-2 inline-flex items-center justify-center gap-2 bg-[#25D366] text-white font-semibold py-3 rounded-full"
+            >
+              <WaIcon className="w-5 h-5" /> {t.nav.book}
+            </a>
+          </div>
+        </div>
+      )}
+    </header>
+  );
+};
+
+const WaveMark = () => (
+  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+    <path d="M2 8c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2" />
+    <path d="M2 14c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2" />
+  </svg>
+);
