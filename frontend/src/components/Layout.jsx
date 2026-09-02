@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
+import { FloatingGoogleReview } from "@/components/FloatingGoogleReview";
 
 export const Layout = () => {
   const { pathname } = useLocation();
@@ -15,6 +16,7 @@ export const Layout = () => {
       </main>
       <Footer />
       <FloatingWhatsApp />
+      <FloatingGoogleReview />
     </div>
   );
 };

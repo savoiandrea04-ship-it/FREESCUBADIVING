@@ -20,7 +20,7 @@ export const ToursGrid = ({ showHeader = true }) => {
 
         <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {s.items.map((tour, i) => {
-            const msg = `Hi Free Way Scuba Diving, I would like information about the "${tour.name}" experience.`;
+            const msg = `Hi Freeway Scuba Diving, I would like information about the "${tour.name}" experience.`;
             return (
               <Reveal key={tour.name} delay={(i % 3) * 0.08}>
                 <div className="group h-full flex flex-col bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl transition-colors hover:border-[#00B4D8]/40" data-testid={`tour-card-${i}`}>

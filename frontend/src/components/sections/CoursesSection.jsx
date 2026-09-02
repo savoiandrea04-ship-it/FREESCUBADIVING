@@ -21,7 +21,7 @@ export const CoursesSection = () => {
 
         <div className="lg:col-span-2 grid sm:grid-cols-2 gap-5">
           {c.items.map((course, i) => {
-            const msg = `Hi Free Way Scuba Diving, I would like information about the "${course.name}" course.`;
+            const msg = `Hi Freeway Scuba Diving, I would like information about the "${course.name}" course.`;
             return (
               <Reveal key={course.name} delay={(i % 2) * 0.08}>
                 <div className="h-full flex flex-col bg-white border border-black/5 rounded-2xl p-6 shadow-sm hover:shadow-lg transition-shadow" data-testid={`course-card-${i}`}>

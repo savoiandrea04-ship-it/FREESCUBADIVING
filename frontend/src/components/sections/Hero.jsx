@@ -11,7 +11,7 @@ export const Hero = () => {
       <div className="absolute inset-0">
         <img
           src={IMAGES.heroCenote}
-          alt="Cenote diving in Tulum — crystal-clear freshwater cave with light beams"
+          alt="Scuba diver exploring a crystal-clear cenote in Tulum, Mexico"
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#020B14] via-[#061A2B]/70 to-[#061A2B]/40" />
@@ -22,7 +22,7 @@ export const Hero = () => {
         <div className="max-w-3xl">
           <motion.span
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}
-            className="inline-flex items-center gap-2 text-[#00B4D8] text-xs sm:text-sm tracking-[0.2em] uppercase font-semibold"
+            className="hidden items-center gap-2 text-[#00B4D8] text-xs sm:text-sm tracking-[0.2em] uppercase font-semibold"
           >
             <span className="w-8 h-px bg-[#00B4D8]" /> {t.hero.badge}
           </motion.span>
@@ -43,7 +43,7 @@ export const Hero = () => {
 
           <motion.p
             initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.2 }}
-            className="mt-3 text-white/60 text-sm sm:text-base max-w-xl leading-relaxed"
+            className="hidden mt-3 text-white/60 text-sm sm:text-base max-w-xl leading-relaxed"
           >
             {t.hero.support}
           </motion.p>
@@ -67,7 +67,7 @@ export const Hero = () => {
               {t.hero.ctaExplore}
             </Link>
             <a
-              href={waLink("Hi Free Way Scuba Diving, I'd like to check availability for cenote diving in Tulum.")}
+              href={waLink("Hi Freeway Scuba Diving, I'd like to check availability for cenote diving in Tulum.")}
               target="_blank"
               rel="noopener noreferrer"
               data-testid="hero-whatsapp-btn"
@@ -79,7 +79,7 @@ export const Hero = () => {
 
           <motion.div
             initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.35 }}
-            className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4"
+            className="mt-12 hidden grid-cols-2 sm:grid-cols-4 gap-4"
           >
             {t.hero.trust.map((item) => {
               const Icon = iconMap[item.icon];

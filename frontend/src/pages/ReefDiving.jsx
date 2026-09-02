@@ -1,11 +1,22 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { ReviewCarousel } from "@/components/ReviewCarousel";
 import { useLanguage } from "@/context/LanguageContext";
 import { waLink, IMAGES } from "@/data/content";
 import { WaIcon, iconMap } from "@/components/icons";
+import { GoogleReviewButton } from "@/components/GoogleReviewButton";
+import { ReviewQuote } from "@/components/ReviewQuote";
 import { PageHeader } from "@/components/sections/PageHeader";
 import { Reveal } from "@/components/Reveal";
-import { Clock, BarChart2, MapPin, Anchor, CheckCircle2, ArrowRight } from "lucide-react";
+import { Clock, BarChart2, MapPin, Anchor, CheckCircle2, ArrowRight, Users, XCircle, Mail } from "lucide-react";
+
+// Map a reef/wreck tour to the booking form's interest index (order shared EN/ES)
+function bookIndex(item) {
+  const type = (item.type || "").toLowerCase();
+  if (type.includes("wreck") || type.includes("naufragio")) return 2;
+  if (type.includes("drift") || type.includes("deriva") || item.name?.toLowerCase().includes("cozumel")) return 3;
+  return 1; // reef diving
+}
 
 const whyPoints = [
   { icon: "Award", title: "Certified dive guides", desc: "Every reef dive led by certified, experienced professionals." },
@@ -16,10 +27,23 @@ const whyPoints = [
   { icon: "Compass", title: "All levels welcome", desc: "From first certified divers to experienced adventurers." },
 ];
 
+function SeasonBadge({ item }) {
+  if (!item.seasonMonths) return null;
+  const month = new Date().getMonth() + 1;
+  const inSeason = item.seasonMonths.includes(month);
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold ${inSeason ? "bg-green-500/15 text-green-400 border-b border-green-500/20" : "bg-white/5 text-white/40 border-b border-white/10"}`}>
+      <span className={`w-2 h-2 rounded-full shrink-0 ${inSeason ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
+      {inSeason ? "🟢 In season now" : "⏸ Out of season"}
+    </div>
+  );
+}
+
 function TourCard({ item, index }) {
   return (
     <Reveal delay={(index % 3) * 0.07}>
       <div className="group h-full flex flex-col bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl transition-colors hover:border-[#00B4D8]/40">
+      <SeasonBadge item={item} />
         <div className="relative h-52 overflow-hidden shrink-0">
           <img
             src={item.image}
@@ -52,8 +76,11 @@ function TourCard({ item, index }) {
             <div className="flex items-center gap-1.5 text-white/60">
               <BarChart2 className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" /> {item.depth}
             </div>
-            <div className="flex items-center gap-1.5 text-white/60 col-span-2">
+            <div className="flex items-center gap-1.5 text-white/60">
               <MapPin className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" /> {item.distance}
+            </div>
+            <div className="flex items-center gap-1.5 text-white/60">
+              <Users className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" /> {item.groupSize || "Max 6 divers"}
             </div>
           </div>
 
@@ -68,12 +95,27 @@ function TourCard({ item, index }) {
           )}
 
           {item.included && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {item.included.map((inc) => (
-                <span key={inc} className="inline-flex items-center gap-1 text-[10px] bg-white/5 border border-white/10 text-white/60 px-2 py-0.5 rounded-full">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-[#00B4D8]" /> {inc}
-                </span>
-              ))}
+            <div className="mt-3">
+              <div className="text-[10px] uppercase tracking-wide text-white/40 mb-1.5">Included</div>
+              <div className="flex flex-wrap gap-1.5">
+                {item.included.map((inc) => (
+                  <span key={inc} className="inline-flex items-center gap-1 text-[10px] bg-white/5 border border-white/10 text-white/60 px-2 py-0.5 rounded-full">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-[#00B4D8]" /> {inc}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {item.notIncluded && (
+            <div className="mt-2">
+              <div className="text-[10px] uppercase tracking-wide text-white/30 mb-1.5">Not included</div>
+              <div className="flex flex-wrap gap-1.5">
+                {item.notIncluded.map((ni) => (
+                  <span key={ni} className="inline-flex items-center gap-1 text-[10px] border border-white/8 text-white/35 px-2 py-0.5 rounded-full">
+                    <XCircle className="w-2.5 h-2.5 text-white/30 shrink-0" /> {ni}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
@@ -82,14 +124,22 @@ function TourCard({ item, index }) {
               <div className="text-[11px] uppercase tracking-wide text-white/50">From</div>
               <div className="font-serif text-2xl text-[#00B4D8]">{item.price}</div>
             </div>
-            <a
-              href={waLink(`Hi Free Way Scuba Diving, I'd like to book the ${item.name}.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
-            >
-              <WaIcon className="w-4 h-4" /> Book
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href={waLink(item.waMsg || `Hi Freeway Scuba Diving, I'd like to book the ${item.name}.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <WaIcon className="w-4 h-4" /> Book
+              </a>
+              <Link
+                to={`/book?i=${bookIndex(item)}`}
+                className="inline-flex items-center gap-2 bg-[#00B4D8] hover:bg-[#0099BB] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <Mail className="w-4 h-4" /> Book
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -113,17 +163,40 @@ export default function ReefDiving() {
   return (
     <>
       <Helmet>
-        <title>Reef Diving Riviera Maya | Scuba Diving in Tulum — Free Way Scuba Diving</title>
-        <meta name="description" content="Enjoy reef diving in the Riviera Maya with certified instructors, Caribbean marine life and beautiful ocean dive sites near Tulum, Playa del Carmen and Cozumel." />
-        <link rel="canonical" href="https://www.freewayscubadiving.com/reef-diving" />
+        <title>{t.seo?.reef?.title || "Reef Diving Tulum & Playa del Carmen | Cozumel, Playa del Carmen & Tulum \u2014 Freeway Scuba Diving"}</title>
+        <meta name="description" content={t.seo?.reef?.description || "Reef diving in Tulum & Playa del Carmen with certified guides. Cozumel drift dives, Playa del Carmen reefs, bull shark diving and whale shark snorkel. Book on WhatsApp."} />
+        <link rel="canonical" href="https://freewayscubadiving.com/reef-diving" />
+        <meta property="og:title" content="Reef Diving Tulum & Playa del Carmen | Freeway Scuba Diving" />
+        <meta property="og:description" content="Reef diving in Cozumel, Playa del Carmen and Tulum. Bull sharks, whale sharks, sea turtles and drift dives with certified guides." />
+        <meta property="og:image" content="https://freewayscubadiving.com/wp-content/uploads/2023/07/diving-in-tulum-scaled.jpg" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Reef Diving Tulum & Playa del Carmen | Freeway Scuba Diving" />
+        <meta name="twitter:description" content="Drift dives in Cozumel, bull sharks in Playa del Carmen, whale shark snorkeling. Certified guides, book on WhatsApp." />
+        <meta name="twitter:image" content="https://freewayscubadiving.com/wp-content/uploads/2023/07/diving-in-tulum-scaled.jpg" />
+        <script type="application/ld+json">{JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://freewayscubadiving.com" }, { "@type": "ListItem", position: 2, name: "Reef Diving", item: "https://freewayscubadiving.com/reef-diving" }] })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Reef Diving in Tulum & Playa del Carmen",
+          "description": "Guided reef diving in Cozumel, Playa del Carmen and Tulum. Bull shark diving, whale shark snorkel and Caribbean drift dives.",
+          "provider": { "@type": "LocalBusiness", "name": "Freeway Scuba Diving" },
+          "areaServed": ["Cozumel", "Playa del Carmen", "Tulum"],
+          "serviceType": "Reef Diving Tour",
+          "offers": [
+            { "@type": "Offer", "name": "Cozumel Marine Park Drift Dive", "price": "4000", "priceCurrency": "MXN" },
+            { "@type": "Offer", "name": "Bull Shark Dive Playa del Carmen", "price": "3500", "priceCurrency": "MXN" },
+            { "@type": "Offer", "name": "Whale Shark Snorkel", "price": "3900", "priceCurrency": "MXN" }
+          ]
+        })}</script>
       </Helmet>
 
       <PageHeader
         image={IMAGES.reef}
-        badge="Riviera Maya · Caribbean"
-        title="Reef Diving in the Riviera Maya"
-        subtitle="Colorful Caribbean reefs, rich marine life and world-class ocean dive sites with certified guides near Tulum, Playa del Carmen and Cozumel."
-        imgAlt="Reef diving in the Riviera Maya — colorful coral and marine life"
+        badge="Tulum · Playa del Carmen · Cozumel"
+        title={t.pageTitles?.reef?.title || "Reef Diving Tours in Tulum, Playa del Carmen & Cozumel"}
+        subtitle={t.pageTitles?.reef?.subtitle || "Private, small-group reef diving along the Mesoamerican Barrier Reef and Cozumel's Marine National Park."}
+        imgAlt="Reef diving in Tulum & Playa del Carmen — colorful coral and marine life"
       />
 
       {/* Intro */}
@@ -134,7 +207,7 @@ export default function ReefDiving() {
             Choose Your Reef Diving Experience
           </h2>
           <p className="mt-5 text-white/65 text-base leading-relaxed max-w-2xl mx-auto">
-            From shallow coral gardens near Tulum to world-famous drift dives in Cozumel and legendary bull shark encounters — we guide certified divers through the best reef sites in the Riviera Maya.
+            From shallow coral gardens near Tulum to world-famous drift dives in Cozumel's Marine National Park and legendary wreck and shark encounters — we guide certified divers through the best reef sites in Tulum & Playa del Carmen with private, small-group attention.
           </p>
         </div>
       </section>
@@ -172,7 +245,7 @@ export default function ReefDiving() {
           <div className="text-center mb-12">
             <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">Why Choose Us</span>
             <h2 className="mt-3 font-serif text-white text-3xl sm:text-4xl tracking-tight">
-              Certified Reef Diving Guides in the Riviera Maya
+              Certified Reef Diving Guides in Tulum & Playa del Carmen
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -213,13 +286,40 @@ export default function ReefDiving() {
         </div>
       </section>
 
+      {/* Open Water CTA */}
+      <section className="py-16 bg-[#061A2B]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <p className="text-[#00B4D8] text-xs font-semibold tracking-widest uppercase mb-2">Not Certified Yet?</p>
+            <h3 className="font-serif text-white text-2xl mb-3">Get Your PADI Open Water</h3>
+            <p className="text-white/65 text-sm leading-relaxed mb-6">
+              Get certified in 2–3 days with a private, personalized PADI Open Water course — and unlock reef diving, cenote diving and dive sites worldwide.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/diving-courses"
+                className="inline-flex items-center justify-center gap-2 bg-[#00B4D8] hover:bg-[#0099BB] text-white font-semibold px-6 py-3 rounded-full transition-transform hover:-translate-y-0.5"
+              >
+                View PADI Courses <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                to="/diving-courses"
+                className="inline-flex items-center justify-center gap-2 border border-[#00B4D8]/40 text-[#00B4D8] hover:bg-[#00B4D8]/10 font-semibold px-6 py-3 rounded-full transition-colors"
+              >
+                PADI Advanced Diver Course <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 bg-[#061A2B] text-center">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="font-serif text-white text-3xl sm:text-4xl mb-4">Ready to Dive the Caribbean Reefs?</h2>
           <p className="text-white/60 mb-8">Message us on WhatsApp to check availability and book your reef diving experience.</p>
           <a
-            href={waLink("Hi Free Way Scuba Diving, I'd like to book a reef diving experience in the Riviera Maya.")}
+            href={waLink("Hi Freeway Scuba Diving, I'd like to book a reef diving experience in Tulum & Playa del Carmen.")}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-8 py-4 rounded-full transition-transform hover:-translate-y-1 shadow-lg shadow-[#25D366]/30"
@@ -228,6 +328,7 @@ export default function ReefDiving() {
           </a>
         </div>
       </section>
+      <ReviewCarousel topic="reef" />
     </>
   );
 }

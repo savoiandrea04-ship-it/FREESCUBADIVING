@@ -1,11 +1,15 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { ReviewCarousel } from "@/components/ReviewCarousel";
 import { useLanguage } from "@/context/LanguageContext";
 import { waLink, IMAGES } from "@/data/content";
+import { GoogleReviewButton } from "@/components/GoogleReviewButton";
+import { ReviewQuote } from "@/components/ReviewQuote";
 import { WaIcon, iconMap } from "@/components/icons";
 import { PageHeader } from "@/components/sections/PageHeader";
 import { Reveal } from "@/components/Reveal";
 import { Clock, BookOpen, CheckCircle2, ArrowRight } from "lucide-react";
+import padiLogo from "@/assets/padi-logo.svg";
 
 const tagColors = {
   Beginner:      "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
@@ -18,14 +22,6 @@ const tagColors = {
   Repaso:        "bg-amber-500/20 text-amber-300 border-amber-500/30",
 };
 
-const whyPoints = [
-  { icon: "Award", title: "PADI certified instructors", desc: "All courses taught by certified, patient and experienced dive instructors." },
-  { icon: "ShieldCheck", title: "Safety first", desc: "We prioritise your comfort and safety at every stage of your course." },
-  { icon: "Users", title: "Small class sizes", desc: "Personal attention throughout — never a crowded class." },
-  { icon: "Compass", title: "Cenote ready on completion", desc: "Finish your course and go straight to a cenote dive in Tulum." },
-  { icon: "Heart", title: "Beginner friendly", desc: "Zero experience needed. We take you from nervous to confident." },
-  { icon: "Fish", title: "Real ocean dives", desc: "All courses include real open water dives — not just pool sessions." },
-];
 
 function CourseCard({ item, index }) {
   return (
@@ -98,7 +94,7 @@ function CourseCard({ item, index }) {
               <div className="font-serif text-2xl text-[#00B4D8]">{item.price}</div>
             </div>
             <a
-              href={waLink(`Hi Free Way Scuba Diving, I'd like information about the ${item.name} course in Tulum.`)}
+              href={waLink(`Hi Freeway Scuba Diving, I'd like information about the ${item.name} course in Tulum.`)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
@@ -115,29 +111,73 @@ function CourseCard({ item, index }) {
 export default function DivingCourses() {
   const { t } = useLanguage();
   const c = t.courses;
+  const ui = t.ui.courses;
 
   return (
     <>
       <Helmet>
-        <title>Diving Courses in Tulum | Learn to Scuba Dive — Free Way Scuba Diving</title>
-        <meta name="description" content="Learn to dive in Tulum with professional diving courses, beginner training, refresher dives and certified instructors. PADI courses available." />
-        <link rel="canonical" href="https://www.freewayscubadiving.com/diving-courses" />
+        <title>{t.seo?.courses?.title || "Diving Courses in Tulum | PADI Open Water, Advanced & Specialty \u2014 Freeway Scuba Diving"}</title>
+        <meta name="description" content={t.seo?.courses?.description || "Learn to scuba dive in Tulum with PADI certified instructors. Open Water, Advanced, Nitrox specialty and Discover Scuba. Small groups, real ocean dives."} />
+        <link rel="canonical" href="https://freewayscubadiving.com/diving-courses" />
+        <meta property="og:title" content="Diving Courses in Tulum | PADI Certified — Freeway Scuba Diving" />
+        <meta property="og:description" content="PADI diving courses in Tulum. Open Water from $8,900 MXN. Small groups, certified instructors, real cenote and ocean dives included." />
+        <meta property="og:image" content="https://freewayscubadiving.com/wp-content/uploads/2023/07/open-water-course-scaled.jpg" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="PADI Diving Courses in Tulum | Freeway Scuba Diving" />
+        <meta name="twitter:description" content="Open Water, Advanced, Nitrox and Discover Scuba in Tulum. Small groups, certified instructors. Book on WhatsApp." />
+        <meta name="twitter:image" content="https://freewayscubadiving.com/wp-content/uploads/2023/07/open-water-course-scaled.jpg" />
+        <script type="application/ld+json">{JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://freewayscubadiving.com" }, { "@type": "ListItem", position: 2, name: "Diving Courses", item: "https://freewayscubadiving.com/diving-courses" }] })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Diving Courses in Tulum",
+          "description": "PADI diving courses in Tulum: Discover Scuba, Open Water, Advanced Open Water, Nitrox Specialty and Scuba Refresher.",
+          "provider": { "@type": "LocalBusiness", "name": "Freeway Scuba Diving" },
+          "areaServed": "Tulum, Quintana Roo, Mexico",
+          "serviceType": "Diving Course",
+          "offers": [
+            { "@type": "Offer", "name": "Discover Scuba Diving", "price": "2500", "priceCurrency": "MXN" },
+            { "@type": "Offer", "name": "Open Water Diver Certification", "price": "8900", "priceCurrency": "MXN" },
+            { "@type": "Offer", "name": "Advanced Open Water", "price": "8500", "priceCurrency": "MXN" }
+          ]
+        })}</script>
       </Helmet>
 
       <PageHeader
         image={IMAGES.course}
-        badge="PADI Courses · Tulum"
-        title="Diving Courses in Tulum"
-        subtitle="Learn to dive or advance your skills with certified professional instructors in the Riviera Maya."
+        badge="PADI Courses · Tulum & Playa del Carmen"
+        title={t.courses.title}
+        subtitle={t.courses.subtitle}
         imgAlt="Diving courses in Tulum — certified scuba instructor teaching students"
       />
+
+      {/* PADI Badge */}
+      <section className="py-8 bg-[#020B14] border-b border-white/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-center gap-6 text-center sm:text-left">
+          <div className="flex items-center gap-4 bg-white/5 border border-white/10 rounded-2xl px-6 py-4">
+            <img src={padiLogo} alt="PADI" className="h-12 w-auto shrink-0" />
+            <div className="text-left">
+              <p className="text-white font-semibold text-sm">{ui.padiLabel}</p>
+              <p className="text-white/55 text-xs mt-0.5">{ui.padiDesc}</p>
+            </div>
+          </div>
+          <div className="hidden sm:block w-px h-12 bg-white/10" />
+          <div className="text-sm text-white/60 max-w-xs">
+            <span className="text-white font-medium">{ui.pickupLabel}</span> {ui.pickupText}
+          </div>
+        </div>
+      </section>
 
       {/* Intro */}
       <section className="py-16 bg-[#061A2B]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">{c.label}</span>
-          <h2 className="mt-4 font-serif text-white text-3xl sm:text-4xl tracking-tight">{c.title}</h2>
+          <h2 className="mt-4 font-serif text-white text-3xl sm:text-4xl tracking-tight">{ui.introH2}</h2>
           <p className="mt-5 text-white/65 text-base leading-relaxed max-w-2xl mx-auto">{c.subtitle}</p>
+          <p className="mt-4 text-white/50 text-sm leading-relaxed max-w-2xl mx-auto">
+            {ui.introP}
+          </p>
         </div>
       </section>
 
@@ -156,13 +196,13 @@ export default function DivingCourses() {
       <section className="py-20 bg-[#020B14]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">Why Learn With Us</span>
+            <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">{ui.whyEyebrow}</span>
             <h2 className="mt-3 font-serif text-white text-3xl sm:text-4xl tracking-tight">
-              Diving Courses in Tulum With Certified Instructors
+              {ui.whyH2}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {whyPoints.map((p) => {
+            {ui.whyPoints.map((p) => {
               const Icon = iconMap[p.icon];
               return (
                 <div key={p.title} className="bg-white/5 border border-white/10 rounded-xl p-6 flex gap-4">
@@ -184,16 +224,16 @@ export default function DivingCourses() {
       <section className="py-16 bg-[#061A2B]">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="bg-[#00B4D8]/10 border border-[#00B4D8]/20 rounded-2xl p-8">
-            <p className="text-[#00B4D8] text-xs font-semibold tracking-widest uppercase mb-2">After Your Course</p>
-            <h3 className="font-serif text-white text-2xl mb-3">Ready to Dive a Cenote?</h3>
+            <p className="text-[#00B4D8] text-xs font-semibold tracking-widest uppercase mb-2">{ui.afterEyebrow}</p>
+            <h3 className="font-serif text-white text-2xl mb-3">{ui.afterH3}</h3>
             <p className="text-white/65 text-sm leading-relaxed mb-6">
-              Once certified, your next step should be a cenote dive in Tulum — our main specialty. Crystal-clear freshwater caves that every diver should experience at least once.
+              {ui.afterP}
             </p>
             <Link
               to="/cenote-diving"
               className="inline-flex items-center gap-2 bg-[#00B4D8] hover:bg-[#0099BB] text-white font-semibold px-6 py-3 rounded-full transition-transform hover:-translate-y-0.5"
             >
-              Explore Cenote Diving in Tulum <ArrowRight className="w-4 h-4" />
+              {ui.afterCta} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
@@ -202,18 +242,19 @@ export default function DivingCourses() {
       {/* CTA */}
       <section className="py-20 bg-[#020B14] text-center">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-white text-3xl sm:text-4xl mb-4">Ready to Start Diving?</h2>
-          <p className="text-white/60 mb-8">Message us on WhatsApp to ask about course dates, availability and the right course for your level.</p>
+          <h2 className="font-serif text-white text-3xl sm:text-4xl mb-4">{ui.ctaH2}</h2>
+          <p className="text-white/60 mb-8">{ui.ctaP}</p>
           <a
-            href={waLink("Hi Free Way Scuba Diving, I'd like information about diving courses in Tulum.")}
+            href={waLink("Hi Freeway Scuba Diving, I'd like information about diving courses in Tulum.")}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-8 py-4 rounded-full transition-transform hover:-translate-y-1 shadow-lg shadow-[#25D366]/30"
           >
-            <WaIcon className="w-5 h-5" /> Ask About Courses on WhatsApp
+            <WaIcon className="w-5 h-5" /> {ui.ctaBtn}
           </a>
         </div>
       </section>
+      <ReviewCarousel topic="course" />
     </>
   );
 }

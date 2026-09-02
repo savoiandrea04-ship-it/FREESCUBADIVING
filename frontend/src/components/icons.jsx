@@ -1,9 +1,9 @@
 import {
-  Heart, Award, Users, Waves, ShieldCheck, Compass, Fish, MessageCircle, MapPin, Star,
+  Heart, Award, Users, Waves, ShieldCheck, Compass, Fish, MessageCircle, MapPin, Star, Calendar,
 } from "lucide-react";
 
 export const iconMap = {
-  Heart, Award, Users, Waves, ShieldCheck, Compass, Fish, MessageCircle, MapPin, Star,
+  Heart, Award, Users, Waves, ShieldCheck, Compass, Fish, MessageCircle, MapPin, Star, Calendar,
 };
 
 export const WaIcon = ({ className = "w-5 h-5" }) => (

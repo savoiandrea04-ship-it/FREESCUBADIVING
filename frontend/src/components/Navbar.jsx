@@ -4,6 +4,7 @@ import { Menu, X, Languages } from "lucide-react";
 import { useLanguage } from "@/context/LanguageContext";
 import { waLink } from "@/data/content";
 import { WaIcon } from "@/components/icons";
+import logoSvg from "@/assets/Logo_principal.svg";
 
 const links = [
   { to: "/", key: "home" },
@@ -14,6 +15,8 @@ const links = [
   { to: "/about", key: "about" },
   { to: "/faq", key: "faq" },
   { to: "/contact", key: "contact" },
+  { to: "/book", key: "bookNow" },
+  { to: "/blog", key: "blog" },
 ];
 
 export const Navbar = () => {
@@ -36,51 +39,52 @@ export const Navbar = () => {
       }`}
       data-testid="main-navbar"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center gap-4">
         <Link to="/" data-testid="nav-logo" className="flex items-center gap-2 group shrink-0">
-          <span className="flex items-center justify-center w-9 h-9 rounded-full bg-[#00B4D8] text-[#061A2B]">
-            <WaveMark />
+          <span className="flex items-center justify-center w-9 h-9 rounded-full bg-white shrink-0 overflow-hidden">
+            <img src={logoSvg} alt="" className="w-8 h-8 object-contain" />
           </span>
-          <span className="font-serif text-white text-lg sm:text-xl leading-none tracking-tight">
-            Free Way <span className="text-[#00B4D8]">Scuba</span>
+          <span className="font-serif text-white text-base sm:text-lg xl:text-sm 2xl:text-base tracking-tight whitespace-nowrap leading-none">
+            Freeway Scuba Diving
           </span>
         </Link>
 
-        <div className="hidden xl:flex items-center gap-5">
-          {links.map((l) => (
-            <NavLink
-              key={l.key}
-              to={l.to}
-              end={l.to === "/"}
-              data-testid={`nav-link-${l.key}`}
-              className={({ isActive }) =>
-                `text-sm font-medium transition-colors whitespace-nowrap ${
-                  l.key === "cenote"
-                    ? isActive
+        <div className="flex-1 flex items-center justify-end gap-4 xl:gap-6">
+          <div className="hidden xl:flex items-center gap-3">
+            {links.map((l) => (
+              <NavLink
+                key={l.key}
+                to={l.to}
+                end={l.to === "/"}
+                data-testid={`nav-link-${l.key}`}
+                className={({ isActive }) =>
+                  `text-sm font-medium transition-colors whitespace-nowrap ${
+                    l.key === "cenote"
+                      ? isActive
+                        ? "text-[#00B4D8]"
+                        : "text-[#00B4D8]/90 hover:text-[#00B4D8]"
+                      : isActive
                       ? "text-[#00B4D8]"
-                      : "text-[#00B4D8]/90 hover:text-[#00B4D8]"
-                    : isActive
-                    ? "text-[#00B4D8]"
-                    : "text-white/80 hover:text-white"
-                }`
-              }
-            >
-              {t.nav[l.key]}
-            </NavLink>
-          ))}
-        </div>
+                      : "text-white/80 hover:text-white"
+                  }`
+                }
+              >
+                {t.nav[l.key]}
+              </NavLink>
+            ))}
+          </div>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
           <button
             onClick={toggle}
             data-testid="lang-toggle-btn"
-            className="hidden sm:flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium px-3 py-2 rounded-full border border-white/15 hover:border-white/30 transition-colors"
+            className="flex items-center gap-1.5 text-white/80 hover:text-white text-sm font-medium px-3 py-2 rounded-full border border-white/15 hover:border-white/30 transition-colors"
           >
             <Languages className="w-4 h-4" />
             {other}
           </button>
           <a
-            href={waLink("Hi Free Way Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
+            href={waLink("Hi Freeway Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
             target="_blank"
             rel="noopener noreferrer"
             data-testid="nav-whatsapp-btn"
@@ -97,6 +101,7 @@ export const Navbar = () => {
           >
             {open ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
+        </div>
         </div>
       </nav>
 
@@ -132,7 +137,7 @@ export const Navbar = () => {
               <Languages className="w-5 h-5" /> {other}
             </button>
             <a
-              href={waLink("Hi Free Way Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
+              href={waLink("Hi Freeway Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
               target="_blank"
               rel="noopener noreferrer"
               data-testid="mobile-whatsapp-btn"
@@ -147,9 +152,3 @@ export const Navbar = () => {
   );
 };
 
-const WaveMark = () => (
-  <svg viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-    <path d="M2 8c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2" />
-    <path d="M2 14c2.5 0 2.5 2 5 2s2.5-2 5-2 2.5 2 5 2 2.5-2 5-2" />
-  </svg>
-);

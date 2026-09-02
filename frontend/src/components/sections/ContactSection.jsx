@@ -1,4 +1,5 @@
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { waLink, EMAIL, PHONE } from "@/data/content";
 import { WaIcon } from "@/components/icons";
@@ -19,6 +20,14 @@ export const ContactSection = () => {
           </Reveal>
 
           <Reveal delay={0.1} className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+            {c.formUrl && (
+              <Link
+                to={c.formUrl} data-testid="contact-form-btn"
+                className="inline-flex items-center justify-center gap-2 bg-[#00B4D8] hover:bg-[#0099BB] text-white font-semibold px-7 py-3.5 rounded-full transition-transform hover:-translate-y-1 shadow-lg shadow-[#00B4D8]/30"
+              >
+                {c.formCta}
+              </Link>
+            )}
             <a
               href={waLink()} target="_blank" rel="noopener noreferrer" data-testid="contact-whatsapp-btn"
               className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-7 py-3.5 rounded-full transition-transform hover:-translate-y-1 shadow-lg shadow-[#25D366]/30"
@@ -53,6 +62,18 @@ export const ContactSection = () => {
 
           <Reveal delay={0.3} className="mt-8 text-center">
             <span className="text-sm text-[#00B4D8]/90">{c.spanish}</span>
+          </Reveal>
+
+          <Reveal delay={0.4} className="mt-6 text-center">
+            <a
+              href="https://g.page/r/CWpT1ePgn0uAEBM/review"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-white/5 border border-white/10 hover:bg-white/10 text-white/80 hover:text-white font-medium px-6 py-3 rounded-full transition-colors text-sm"
+            >
+              <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+              Leave us a Google Review — it means the world to us
+            </a>
           </Reveal>
         </div>
       </div>

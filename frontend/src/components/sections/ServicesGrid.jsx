@@ -26,7 +26,7 @@ export const ServicesGrid = () => {
           <div className="lg:col-span-2 relative rounded-2xl overflow-hidden group min-h-[420px] flex flex-col justify-end">
             <img
               src={serviceImages.cenote}
-              alt="Cenote diving in Tulum"
+              alt="PADI diving instructor guiding a small group of divers in Tulum"
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
               loading="lazy"
             />
@@ -49,8 +49,8 @@ export const ServicesGrid = () => {
           {/* Reef + Courses stacked */}
           <div className="flex flex-col gap-6">
             {[
-              { key: "reef", img: serviceImages.reef, alt: "Reef diving Riviera Maya" },
-              { key: "courses", img: serviceImages.courses, alt: "Diving courses Tulum" },
+              { key: "reef", img: serviceImages.reef, alt: "Diver swimming over coral reef in Cozumel, Mexico" },
+              { key: "courses", img: serviceImages.courses, alt: "PADI Open Water certification course in Playa del Carmen" },
             ].map(({ key, img, alt }) => {
               const svc = s[key];
               return (

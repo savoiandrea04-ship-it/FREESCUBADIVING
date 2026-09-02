@@ -1,12 +1,15 @@
 import { Helmet } from "react-helmet-async";
 import { Link } from "react-router-dom";
+import { ReviewCarousel } from "@/components/ReviewCarousel";
 import { useLanguage } from "@/context/LanguageContext";
 import { waLink, IMAGES } from "@/data/content";
+import { GoogleReviewButton } from "@/components/GoogleReviewButton";
+import { ReviewQuote } from "@/components/ReviewQuote";
 import { WaIcon, iconMap } from "@/components/icons";
 import { PageHeader } from "@/components/sections/PageHeader";
 import { FaqSection } from "@/components/sections/FaqSection";
 import { Reveal } from "@/components/Reveal";
-import { Clock, BarChart2, MapPin, Anchor, CheckCircle2, ArrowRight } from "lucide-react";
+import { Clock, BarChart2, MapPin, Anchor, CheckCircle2, ArrowRight, Users, XCircle, Play, Mail } from "lucide-react";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -18,19 +21,24 @@ const faqJsonLd = {
   ],
 };
 
-const whyPoints = [
-  { icon: "MapPin", title: "Local cenote knowledge", desc: "We know the best cenotes around Tulum and guide you safely through them." },
-  { icon: "ShieldCheck", title: "Safety first", desc: "Every dive starts with a thorough safety briefing adapted to your level." },
-  { icon: "Users", title: "Small groups", desc: "Maximum attention, comfort and safety." },
-  { icon: "Award", title: "Certified guides", desc: "Experienced, passionate and professional." },
-  { icon: "Compass", title: "Personalized", desc: "Adapted to your experience level and pace." },
-  { icon: "Fish", title: "Crystal-clear water", desc: "Extraordinary underwater visibility in freshwater cenotes." },
-];
+
+function SeasonBadge({ item }) {
+  if (!item.seasonMonths) return null;
+  const month = new Date().getMonth() + 1;
+  const inSeason = item.seasonMonths.includes(month);
+  return (
+    <div className={`flex items-center gap-1.5 px-3 py-2 text-xs font-semibold ${inSeason ? "bg-green-500/15 text-green-400 border-b border-green-500/20" : "bg-white/5 text-white/40 border-b border-white/10"}`}>
+      <span className={`w-2 h-2 rounded-full shrink-0 ${inSeason ? "bg-green-400 animate-pulse" : "bg-white/20"}`} />
+      {inSeason ? "🟢 In season now" : "⏸ Out of season"}
+    </div>
+  );
+}
 
 function TourCard({ item, index }) {
   return (
     <Reveal delay={(index % 3) * 0.07}>
       <div className={`group h-full flex flex-col bg-white/5 backdrop-blur-xl border rounded-2xl overflow-hidden shadow-2xl transition-colors hover:border-[#00B4D8]/40 ${item.highlight ? "border-[#00B4D8]/50 ring-1 ring-[#00B4D8]/30" : "border-white/10"}`}>
+      <SeasonBadge item={item} />
         {/* Image */}
         <div className="relative h-52 overflow-hidden shrink-0">
           <img
@@ -53,6 +61,14 @@ function TourCard({ item, index }) {
               <Anchor className="w-3 h-3 text-[#00B4D8]" /> {item.cenote}
             </div>
           )}
+          {item.reelUrl && (
+            <a href={item.reelUrl} target="_blank" rel="noopener noreferrer"
+              className="absolute inset-0 flex items-center justify-center">
+              <span className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-sm border border-white/30 flex items-center justify-center transition-transform hover:scale-110 shadow-xl">
+                <Play className="w-6 h-6 text-white ml-1" fill="white" />
+              </span>
+            </a>
+          )}
         </div>
 
         {/* Body */}
@@ -71,8 +87,11 @@ function TourCard({ item, index }) {
             <div className="flex items-center gap-1.5 text-white/60">
               <BarChart2 className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" /> {item.depth}
             </div>
-            <div className="flex items-center gap-1.5 text-white/60 col-span-2">
+            <div className="flex items-center gap-1.5 text-white/60">
               <MapPin className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" /> {item.distance}
+            </div>
+            <div className="flex items-center gap-1.5 text-white/60">
+              <Users className="w-3.5 h-3.5 text-[#00B4D8] shrink-0" /> {item.groupSize || "Max 4 divers"}
             </div>
           </div>
 
@@ -89,12 +108,27 @@ function TourCard({ item, index }) {
 
           {/* Included */}
           {item.included && (
-            <div className="mt-3 flex flex-wrap gap-1.5">
-              {item.included.map((inc) => (
-                <span key={inc} className="inline-flex items-center gap-1 text-[10px] bg-white/5 border border-white/10 text-white/60 px-2 py-0.5 rounded-full">
-                  <CheckCircle2 className="w-2.5 h-2.5 text-[#00B4D8]" /> {inc}
-                </span>
-              ))}
+            <div className="mt-3">
+              <div className="text-[10px] uppercase tracking-wide text-white/40 mb-1.5">Included</div>
+              <div className="flex flex-wrap gap-1.5">
+                {item.included.map((inc) => (
+                  <span key={inc} className="inline-flex items-center gap-1 text-[10px] bg-white/5 border border-white/10 text-white/60 px-2 py-0.5 rounded-full">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-[#00B4D8]" /> {inc}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          {item.notIncluded && (
+            <div className="mt-2">
+              <div className="text-[10px] uppercase tracking-wide text-white/30 mb-1.5">Not included</div>
+              <div className="flex flex-wrap gap-1.5">
+                {item.notIncluded.map((ni) => (
+                  <span key={ni} className="inline-flex items-center gap-1 text-[10px] border border-white/8 text-white/35 px-2 py-0.5 rounded-full">
+                    <XCircle className="w-2.5 h-2.5 text-white/30 shrink-0" /> {ni}
+                  </span>
+                ))}
+              </div>
             </div>
           )}
 
@@ -104,14 +138,22 @@ function TourCard({ item, index }) {
               <div className="text-[11px] uppercase tracking-wide text-white/50">From</div>
               <div className="font-serif text-2xl text-[#00B4D8]">{item.price}</div>
             </div>
-            <a
-              href={waLink(`Hi Free Way Scuba Diving, I'd like to book the ${item.name}.`)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
-            >
-              <WaIcon className="w-4 h-4" /> Book
-            </a>
+            <div className="flex items-center gap-2">
+              <a
+                href={waLink(item.waMsg || `Hi Freeway Scuba Diving, I'd like to book the ${item.name}.`)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <WaIcon className="w-4 h-4" /> Book
+              </a>
+              <Link
+                to="/book?i=0"
+                className="inline-flex items-center gap-2 bg-[#00B4D8] hover:bg-[#0099BB] text-white font-semibold px-4 py-2.5 rounded-full text-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap"
+              >
+                <Mail className="w-4 h-4" /> Book
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -120,41 +162,92 @@ function TourCard({ item, index }) {
 }
 
 export default function CenoteDiving() {
-  const { t } = useLanguage();
+  const { t, lang } = useLanguage();
+  const ui = t.ui.cenote;
 
-  const cenoteItems = t.packages.items.filter(
-    (i) => i.cenote && i.type && !i.type.toLowerCase().includes("ocean") && !i.type.toLowerCase().includes("snorkel") && !i.type.toLowerCase().includes("combo")
+  const cenoteItems = t.cenoteTours.items.filter(
+    (i) => !i.type.toLowerCase().includes("combo")
   );
 
-  const comboItem = t.packages.items.find((i) => i.type && i.type.toLowerCase().includes("combo"));
+  const comboItem = t.cenoteTours.items.find((i) => i.type.toLowerCase().includes("combo"));
 
   return (
     <>
       <Helmet>
-        <title>Cenote Diving in Tulum | Certified Cenote Dive Guides — Free Way Scuba Diving</title>
-        <meta name="description" content="Book cenote diving in Tulum with certified local guides. Explore crystal-clear freshwater cenotes, small groups, professional equipment and safe guided dives." />
-        <link rel="canonical" href="https://www.freewayscubadiving.com/cenote-diving" />
+        <title>{t.seo?.cenote?.title || "Cenote Diving in Tulum | Certified Cenote Dive Guides \u2014 Freeway Scuba Diving"}</title>
+        <meta name="description" content={t.seo?.cenote?.description || "Book cenote diving in Tulum with certified local guides. Small groups, max 4 divers, professional equipment. Gran Cenote, Dos Ojos, Calavera and more."} />
+        <link rel="canonical" href="https://freewayscubadiving.com/cenote-diving" />
+        <meta property="og:title" content="Cenote Diving in Tulum | Freeway Scuba Diving" />
+        <meta property="og:description" content="Explore crystal-clear freshwater cenotes in Tulum with certified local guides. Small groups, max 4 divers, safety first." />
+        <meta property="og:image" content="https://freewayscubadiving.com/wp-content/uploads/2023/07/dos-ojos-cenote-2.jpg" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Cenote Diving in Tulum | Freeway Scuba Diving" />
+        <meta name="twitter:description" content="Crystal-clear cenotes, certified guides, max 4 divers. Gran Cenote, Dos Ojos, Calavera and more. Book on WhatsApp." />
+        <meta name="twitter:image" content="https://freewayscubadiving.com/wp-content/uploads/2023/07/dos-ojos-cenote-2.jpg" />
+        <script type="application/ld+json">{JSON.stringify({ "@context": "https://schema.org", "@type": "BreadcrumbList", itemListElement: [{ "@type": "ListItem", position: 1, name: "Home", item: "https://freewayscubadiving.com" }, { "@type": "ListItem", position: 2, name: "Cenote Diving", item: "https://freewayscubadiving.com/cenote-diving" }] })}</script>
         <script type="application/ld+json">{JSON.stringify(faqJsonLd)}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Cenote Diving in Tulum",
+          "description": "Guided cenote diving experiences in Tulum's freshwater cave systems. Small groups, certified guides, professional equipment.",
+          "provider": { "@type": "LocalBusiness", "name": "Freeway Scuba Diving" },
+          "areaServed": "Tulum, Quintana Roo, Mexico",
+          "serviceType": "Cenote Diving Tour",
+          "offers": [
+            { "@type": "Offer", "name": "Gran Cenote Dive", "price": "2900", "priceCurrency": "MXN" },
+            { "@type": "Offer", "name": "Dos Ojos Cave System", "price": "3200", "priceCurrency": "MXN" },
+            { "@type": "Offer", "name": "Calavera Temple of Doom", "price": "3000", "priceCurrency": "MXN" }
+          ]
+        })}</script>
       </Helmet>
 
       <PageHeader
         image={IMAGES.heroCenote}
         badge="Main Specialty · Tulum"
-        title="Cenote Diving in Tulum"
-        subtitle="Explore the most unique cenote diving experiences in Tulum and the Riviera Maya with certified local guides."
+        title={t.pageTitles?.cenote?.title || "Cenote Diving in Tulum"}
+        subtitle={t.pageTitles?.cenote?.subtitle || "Private cenote diving trips in Tulum & Playa del Carmen with certified local guides."}
         imgAlt="Cenote diving in Tulum — crystal-clear freshwater cave with sunlight beams"
       />
 
       {/* Intro */}
       <section className="py-16 bg-[#061A2B]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">Our Main Specialty</span>
+          <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">{ui.eyebrow}</span>
           <h2 className="mt-4 font-serif text-white text-3xl sm:text-4xl tracking-tight">
-            Choose Your Cenote Diving Experience
+            {ui.h2}
           </h2>
           <p className="mt-5 text-white/65 text-base leading-relaxed max-w-2xl mx-auto">
-            Cenote diving is what we do best. Each cenote in Tulum offers a completely different world — from cathedral-like open caverns to deep connected cave systems. Find your perfect dive below.
+            {ui.intro}
           </p>
+        </div>
+      </section>
+
+      {/* What is a cenote */}
+      <section className="py-14 bg-[#020B14]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <Reveal>
+            <div className="text-center max-w-2xl mx-auto mb-10">
+              <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">{ui.whatToExpectEyebrow}</span>
+              <h2 className="mt-3 font-serif text-white text-3xl sm:text-4xl tracking-tight">
+                {ui.whatIsCenoteH2}
+              </h2>
+              <p className="mt-4 text-white/60 text-base leading-relaxed">
+                {ui.cenoteDef}
+              </p>
+            </div>
+          </Reveal>
+          <Reveal delay={0.08}>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              {ui.features.map((f) => (
+                <div key={f.label} className="bg-white/5 border border-white/10 rounded-xl p-4 flex flex-col items-center gap-2 text-center">
+                  <span className="text-2xl">{f.icon}</span>
+                  <p className="text-white/80 font-medium text-xs leading-snug">{f.label}</p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </div>
       </section>
 
@@ -174,13 +267,13 @@ export default function CenoteDiving() {
       <section className="py-20 bg-[#020B14]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">Why Choose Us</span>
+            <span className="text-[#00B4D8] text-xs tracking-[0.2em] uppercase font-semibold">{ui.whyEyebrow}</span>
             <h2 className="mt-3 font-serif text-white text-3xl sm:text-4xl tracking-tight">
-              Certified Cenote Diving Guides in Tulum
+              {ui.whyH2}
             </h2>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {whyPoints.map((p) => {
+            {ui.whyPoints.map((p) => {
               const Icon = iconMap[p.icon];
               return (
                 <div key={p.title} className="bg-white/5 border border-white/10 rounded-xl p-6 flex gap-4">
@@ -198,32 +291,52 @@ export default function CenoteDiving() {
         </div>
       </section>
 
+      {/* Sidemount upsell */}
+      <section className="py-16 bg-[#061A2B]">
+        <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-8">
+            <p className="text-[#00B4D8] text-xs font-semibold tracking-widest uppercase mb-2">{ui.sidemountEyebrow}</p>
+            <h3 className="font-serif text-white text-2xl mb-3">{ui.sidemountH3}</h3>
+            <p className="text-white/65 text-sm leading-relaxed mb-6">
+              {ui.sidemountText}
+            </p>
+            <Link
+              to="/diving-courses"
+              className="inline-flex items-center gap-2 bg-[#00B4D8] hover:bg-[#0099BB] text-white font-semibold px-6 py-3 rounded-full transition-transform hover:-translate-y-0.5"
+            >
+              {ui.sidemountCta} <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* FAQ */}
       <FaqSection />
 
       {/* CTA */}
       <section className="py-20 bg-[#061A2B] text-center">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="font-serif text-white text-3xl sm:text-4xl mb-4">Ready to Dive a Cenote in Tulum?</h2>
-          <p className="text-white/60 mb-8">Message us on WhatsApp to check availability and book your cenote diving experience.</p>
+          <h2 className="font-serif text-white text-3xl sm:text-4xl mb-4">{ui.ctaH2}</h2>
+          <p className="text-white/60 mb-8">{ui.ctaP}</p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <a
-              href={waLink("Hi Free Way Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
+              href={waLink("Hi Freeway Scuba Diving, I'd like to book a cenote diving experience in Tulum.")}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold px-8 py-4 rounded-full transition-transform hover:-translate-y-1 shadow-lg shadow-[#25D366]/30"
             >
-              <WaIcon className="w-5 h-5" /> Book Cenote Diving on WhatsApp
+              <WaIcon className="w-5 h-5" /> {ui.ctaBtn}
             </a>
             <Link
               to="/packages"
               className="inline-flex items-center justify-center gap-2 bg-white/10 text-white border border-white/20 hover:bg-white/20 font-semibold px-8 py-4 rounded-full transition-colors"
             >
-              View All Packages <ArrowRight className="w-4 h-4" />
+              {ui.ctaBtn2} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </section>
+      <ReviewCarousel topic="cenote" />
     </>
   );
 }
